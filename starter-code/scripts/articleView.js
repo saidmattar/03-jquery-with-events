@@ -40,22 +40,26 @@ articleView.handleAuthorFilter = function() {
       // TODO: If the select box was changed to an option that has a value, we need to hide all the articles,
       //       and then show just the ones that match for the author that was selected.
       //       Use an "attribute selector" to find those articles, and fade them in for the reader.
-      var $selection = $(this).val();
+      var $authorSelection = $(this).val();
 
       $('section#articles').find('article').each(function(){
         $(this).hide();
       });
 
       $('section#articles').find('article').each(function(){
-        if($(this).data('author') === $selection){
+        if($(this).data('author') === $authorSelection){
           console.log($(this));
           $(this).show(500);
         }
       });
+
     } else {
       // TODO: If the select box was changed to an option that is blank, we should
       //       show all the articles, except the one article we are using as a template.
-
+      $('section#articles').find('article').each(function(){
+        $(this).show(500);
+      });
+      $('article.template').hide();
     }
     $('#category-filter').val('');
   });
@@ -66,7 +70,31 @@ articleView.handleCategoryFilter = function() {
   //       When an option with a value is selected, hide all the articles, then reveal the matches.
   //       When the blank (default) option is selected, show all the articles, except for the template.
   //       Be sure to reset the #author-filter while you are at it!
+  $('#category-filter').on('change', function() {
+    console.log($(this).val());
+    if ($(this).val()) {
+      var $categorySelection = $(this).val();
 
+      $('section#articles').find('article').each(function(){
+        $(this).hide();
+      });
+
+      $('section#articles').find('article').each(function(){
+        if($(this).data('category') === $categorySelection){
+          console.log($(this));
+          $(this).show(500);
+        }
+      });
+    }
+
+    else{
+      $('section#articles').find('article').each(function(){
+        $(this).show(500);
+      });
+      $('article.template').hide();
+    }
+    $('#author-filter').val('');
+  });
 };
 
 articleView.handleMainNav = function() {
@@ -76,6 +104,12 @@ articleView.handleMainNav = function() {
   //       So: You need to dynamically build a selector string with the correct ID, based on the
   //       data available to you on the .tab element that was clicked.
 
+  $('.main-nav').on('click','.tab', function(){
+    $('.tab-content').hide();
+    var $content = $(this).data('content');
+    console.log($content);
+    $('.tab-content#' + $content).show();
+  });
 
   $('.main-nav .tab:first').click(); // Let's now trigger a click on the first .tab element, to set up the page.
 };
@@ -90,6 +124,23 @@ articleView.setTeasers = function() {
   //       process any .read-on clicks that happen within child nodes.
 
   // STRETCH GOAl!: change the 'Read On' link to 'Show Less'
+  $('.read-on').on('click',function(e){
+    console.log($(this).text());
+    var $arBody = $(this).prev();
+
+    if($(this).text() === 'Read on →'){
+      e.preventDefault();
+      $arBody.find('p').show();
+      $(this).text('Show Less');
+    }
+    else{
+      e.preventDefault();
+      $arBody.find('*:nth-of-type(n+2)').hide();
+      $(this).text('Read on →');
+    }
+  });
+
+
 
 };
 
@@ -97,4 +148,7 @@ articleView.setTeasers = function() {
 $(document).ready(function() {
   articleView.populateFilters();
   articleView.handleAuthorFilter();
+  articleView.handleCategoryFilter();
+  articleView.handleMainNav();
+  articleView.setTeasers();
 })
