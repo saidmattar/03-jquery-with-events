@@ -40,7 +40,18 @@ articleView.handleAuthorFilter = function() {
       // TODO: If the select box was changed to an option that has a value, we need to hide all the articles,
       //       and then show just the ones that match for the author that was selected.
       //       Use an "attribute selector" to find those articles, and fade them in for the reader.
+      var $selection = $(this).val();
 
+      $('section#articles').find('article').each(function(){
+        $(this).hide();
+      });
+
+      $('section#articles').find('article').each(function(){
+        if($(this).data('author') === $selection){
+          console.log($(this));
+          $(this).show(500);
+        }
+      });
     } else {
       // TODO: If the select box was changed to an option that is blank, we should
       //       show all the articles, except the one article we are using as a template.
@@ -84,5 +95,6 @@ articleView.setTeasers = function() {
 
 // TODO: Call all of the above functions, once we are sure the DOM is ready.
 $(document).ready(function() {
-
+  articleView.populateFilters();
+  articleView.handleAuthorFilter();
 })
